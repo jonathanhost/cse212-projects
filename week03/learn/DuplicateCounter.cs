@@ -24,7 +24,8 @@
 
     private static int CountDuplicates(int[] data)
     {
-        // Add code here.
+         HashSet<int> duplicates = new HashSet<int>(data);
+         
         return 0;
     }
 }
