@@ -19,34 +19,94 @@ public static class SetsAndMaps
     /// that there were no duplicates) and therefore should not be returned.
     /// </summary>
     /// <param name="words">An array of 2-character words (lowercase, no duplicates)</param>
-    public static string[] FindPairs(string[] words)
+     public static string[] FindPairs(string[] words)
     {
-        // TODO Problem 1 - ADD YOUR CODE HERE
-        return [];
+        if (words == null || words.Length == 0)
+            return Array.Empty<string>();
+
+        var grupos = new Dictionary<string, HashSet<string>>(Math.Max(16, words.Length / 4), StringComparer.Ordinal);
+
+        foreach (var palavra in words)
+        {
+           
+            string chave;
+            if (palavra.Length <= 1)
+            {
+                chave = palavra;
+            }
+            else if (palavra.Length == 2)
+            {
+                
+                char a = palavra[0], b = palavra[1];
+                chave = a <= b ? palavra : new string(new char[] { b, a });
+            }
+            else
+            {
+                
+                var chars = palavra.ToCharArray();
+                Array.Sort(chars);
+                chave = new string(chars);
+            }
+
+            if (!grupos.TryGetValue(chave, out var set))
+            {
+                set = new HashSet<string>(StringComparer.Ordinal);
+                grupos[chave] = set;
+            }
+
+            set.Add(palavra); 
+        }
+
+       
+        var resultado = new List<string>(grupos.Count);
+        foreach (var set in grupos.Values)
+        {
+            if (set.Count > 1)
+            {
+                var lista = new List<string>(set);
+                lista.Sort(StringComparer.Ordinal); 
+                resultado.Add(string.Join(" & ", lista));
+            }
+        }
+
+        return resultado.ToArray();
     }
 
+
+
     /// <summary>
-    /// Read a census file and summarize the degrees (education)
-    /// earned by those contained in the file.  The summary
-    /// should be stored in a dictionary where the key is the
-    /// degree earned and the value is the number of people that 
-    /// have earned that degree.  The degree information is in
-    /// the 4th column of the file.  There is no header row in the
-    /// file.
-    /// </summary>
-    /// <param name="filename">The name of the file to read</param>
-    /// <returns>fixed array of divisors</returns>
-    public static Dictionary<string, int> SummarizeDegrees(string filename)
-    {
-        var degrees = new Dictionary<string, int>();
+/// Read a census file and summarize the degrees (education)
+/// earned by those contained in the file.  The summary
+/// should be stored in a dictionary where the key is the
+/// degree earned and the value is the number of people that 
+/// have earned that degree.  The degree information is in
+/// the 4th column of the file.  There is no header row in the
+/// file.
+/// </summary>
+/// <param name="filename">The name of the file to read</param>
+/// <returns>fixed array of divisors</returns>
+public static Dictionary<string, int> SummarizeDegrees(string filename)
+{
+    var degrees = new Dictionary<string, int>();
+        
         foreach (var line in File.ReadLines(filename))
         {
-            var fields = line.Split(",");
-            // TODO Problem 2 - ADD YOUR CODE HERE
+            var fields = line.Split(',');
+
+            if (fields.Length < 4) 
+                continue; 
+
+            string degree = fields[3].Trim(); 
+
+            if (!degrees.ContainsKey(degree))
+                degrees[degree] = 0;
+
+            degrees[degree]++;
         }
 
         return degrees;
     }
+
 
     /// <summary>
     /// Determine if 'word1' and 'word2' are anagrams.  An anagram
