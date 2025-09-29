@@ -31,8 +31,19 @@ public class LinkedList : IEnumerable<int>
     /// Insert a new node at the back (i.e. the tail) of the linked list.
     /// </summary>
     public void InsertTail(int value)
-    {
-        // TODO Problem 1
+    {   Node newNode = new(value);
+         if (_tail is null)
+        {
+            _head = newNode;
+            _tail = newNode;
+        }
+        // If the list is not empty, then only head will be affected.
+        else
+        {
+            newNode.Prev = _tail; // Connect new node to the previous tail
+            _tail.Next = newNode; // Connect the previous tail to the new node
+            _tail = newNode ; // Update the head to point to the new node
+        }
     }
 
 
@@ -64,7 +75,16 @@ public class LinkedList : IEnumerable<int>
     /// </summary>
     public void RemoveTail()
     {
-        // TODO Problem 2
+        if (_head == _tail)
+        {
+            _head = null;
+            _tail = null;
+        }
+        else if (_tail is not null)
+        {
+           _tail = _tail.Prev;
+            _tail!.Next = null;
+        }
     }
 
     /// <summary>
@@ -108,7 +128,20 @@ public class LinkedList : IEnumerable<int>
     /// </summary>
     public void Remove(int value)
     {
-        // TODO Problem 3
+        for (var current = _head; current != null; current = current.Next)
+    {
+        if (current.Data == value)
+        {
+            if (current == _head) RemoveHead();
+            else if (current == _tail) RemoveTail();
+            else
+            {
+                current.Prev!.Next = current.Next;
+                current.Next!.Prev = current.Prev;
+            }
+            return; 
+        }
+    }
     }
 
     /// <summary>
@@ -116,7 +149,13 @@ public class LinkedList : IEnumerable<int>
     /// </summary>
     public void Replace(int oldValue, int newValue)
     {
-        // TODO Problem 4
+        for (var current = _head; current != null; current = current.Next)
+    {
+        if (current.Data == oldValue)
+        {
+            current.Data = newValue;
+        }
+    }
     }
 
     /// <summary>
